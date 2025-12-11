@@ -29,8 +29,8 @@ const poolConfigWithDb = {
 
 const pool = mysql.createPool(poolConfigWithDb);
 
-// initialize database and create tables if needed
-async function initializeDatabase() {
+// check if database exists on load
+async function checkDatabase() {
     try {
         const connection = await adminPool.getConnection();
         
@@ -41,119 +41,23 @@ async function initializeDatabase() {
         );
         
         if (databases.length === 0) {
-            await connection.execute(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
+            console.warn(`⚠️  Database '${dbName}' not found. Please run: mysql -u ${process.env.HEALTH_USER || 'health_app'} -p < database/create_db.sql`);
         }
         
         connection.release();
         
-        const dbConnection = await pool.getConnection();
-        
-        const [tables] = await dbConnection.execute(
-            `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'users'`,
-            [dbName]
-        );
-        
-        const [favoriteFoodsTable] = await dbConnection.execute(
-            `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'favorite_foods'`,
-            [dbName]
-        );
-        
-        if (tables.length === 0) {
-            await dbConnection.execute(`
-                CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    username VARCHAR(50) UNIQUE NOT NULL,
-                    email VARCHAR(100) UNIQUE NOT NULL,
-                    password_hash VARCHAR(255) NOT NULL,
-                    salt VARCHAR(255) NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            `);
-            
-            await dbConnection.execute(`
-                CREATE TABLE IF NOT EXISTS weight_records (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id INT NOT NULL,
-                    weight DECIMAL(5,2) NOT NULL,
-                    record_date DATE NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                    UNIQUE KEY unique_user_date (user_id, record_date)
-                )
-            `);
-            
-            await dbConnection.execute(`
-                CREATE TABLE IF NOT EXISTS goals (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id INT NOT NULL,
-                    target_weight DECIMAL(5,2),
-                    target_date DATE,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-                )
-            `);
-            
-            await dbConnection.execute(`
-                CREATE TABLE IF NOT EXISTS supplements (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id INT NOT NULL,
-                    supplement_name VARCHAR(100) NOT NULL,
-                    dosage VARCHAR(50),
-                    frequency VARCHAR(50),
-                    notes TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-                )
-            `);
-            
-            await dbConnection.execute(`
-                CREATE TABLE IF NOT EXISTS favorite_foods (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id INT NOT NULL,
-                    fdc_id INT NOT NULL,
-                    food_name VARCHAR(255) NOT NULL,
-                    nutrition_data JSON,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                    UNIQUE KEY unique_user_food (user_id, fdc_id)
-                )
-            `);
-        } else {
-            // create favorite_foods table if missing
-            if (favoriteFoodsTable.length === 0) {
-                await dbConnection.execute(`
-                    CREATE TABLE IF NOT EXISTS favorite_foods (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        user_id INT NOT NULL,
-                        fdc_id INT NOT NULL,
-                        food_name VARCHAR(255) NOT NULL,
-                        nutrition_data JSON,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                        UNIQUE KEY unique_user_food (user_id, fdc_id)
-                    )
-                `);
-            }
-        }
-        
-        dbConnection.release();
-        
     } catch (error) {
-        console.error('Database initialization error:', error.message);
+        console.error('Database check error:', error.message);
         if (error.code === 'ER_ACCESS_DENIED_ERROR') {
             console.error('Access denied. Please check your MySQL username and password in .env file');
         } else if (error.code === 'ECONNREFUSED') {
             console.error('Connection refused. Please make sure MySQL server is running');
-        } else {
-            console.error('Error:', error.message);
         }
     }
 }
 
-// initialize on load
-initializeDatabase();
+// check on load
+checkDatabase();
 
 module.exports = pool;
 

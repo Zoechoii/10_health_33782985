@@ -72,7 +72,7 @@ body {
     background: #c0392b;
 }
 
-/*main/
+/*main*/
 .main-content {
     max-width: 1200px;
     margin: 2rem auto;
@@ -124,7 +124,7 @@ body {
     text-decoration: underline;
 }
 
-/* 폼 요소 */
+/* Form elements */
 .form-group {
     display: flex;
     flex-direction: column;

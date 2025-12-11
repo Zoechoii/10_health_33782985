@@ -2,11 +2,48 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
+const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || '0.0.0.0';
+
+// initialize database from SQL file
+async function initializeDatabaseFromSQL() {
+    try {
+        const password = process.env.HEALTH_PASSWORD && process.env.HEALTH_PASSWORD.trim() !== '' 
+            ? process.env.HEALTH_PASSWORD 
+            : undefined;
+
+        const connection = await mysql.createConnection({
+            host: process.env.HEALTH_HOST || 'localhost',
+            user: process.env.HEALTH_USER || 'health_app',
+            password: password,
+            port: process.env.HEALTH_PORT || 3306,
+            multipleStatements: true
+        });
+
+        const sqlFilePath = path.join(__dirname, 'database', 'create_db.sql');
+        const sqlContent = fs.readFileSync(sqlFilePath, 'utf8');
+
+        await connection.query(sqlContent);
+        await connection.end();
+
+        console.log('✅ Database initialized from create_db.sql');
+    } catch (error) {
+        console.error('❌ Database initialization error:', error.message);
+        if (error.code === 'ER_ACCESS_DENIED_ERROR') {
+            console.error('Access denied. Please check your MySQL username and password in .env file');
+        } else if (error.code === 'ECONNREFUSED') {
+            console.error('Connection refused. Please make sure MySQL server is running');
+        }
+    }
+}
+
+// initialize database on startup
+initializeDatabaseFromSQL();
 
 
 
