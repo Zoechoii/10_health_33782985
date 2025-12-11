@@ -1,0 +1,43 @@
+<%- include('partials/header', { title: 'Saved Foods - YakTime', username: username }) %>
+
+<div class="page-container">
+    <h1>Saved Foods</h1>
+    
+    <% if (typeof success !== 'undefined' && success === 'deleted') { %>
+    <div class="alert alert-success">Food removed from favorites!</div>
+    <% } %>
+    
+    <% if (typeof error !== 'undefined' && error === 'delete_failed') { %>
+    <div class="alert alert-error">Failed to delete food.</div>
+    <% } %>
+    
+    <div class="content-card full-width">
+        <% if (favorites && favorites.length > 0) { %>
+        <div class="food-list">
+            <% favorites.forEach(favorite => { %>
+            <div class="food-item-card">
+                <h3><%= favorite.food_name %></h3>
+                <p><strong>Saved:</strong> <%= new Date(favorite.created_at).toLocaleDateString() %></p>
+                <div style="margin-top: 10px;">
+                    <a href="/nutrition?q=<%= encodeURIComponent(favorite.food_name) %>&fdcId=<%= favorite.fdc_id %>" 
+                       class="btn btn-secondary btn-sm">View Details</a>
+                    <form action="/nutrition/favorites/delete/<%= favorite.id %>" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" 
+                                onclick="return confirm('Are you sure you want to remove this food?')">Remove</button>
+                    </form>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <p class="empty-state">No saved foods yet. <a href="/nutrition">Search for foods</a> to save them.</p>
+        <% } %>
+    </div>
+    
+    <div class="content-card">
+        <a href="/nutrition" class="btn btn-primary">Back to Nutrition Search</a>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+

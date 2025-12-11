@@ -1,0 +1,94 @@
+<%- include('partials/header', { title: 'Search - YakTime', username: username }) %>
+
+<div class="page-container">
+    <h1>Search</h1>
+    
+    <div class="search-container">
+        <form action="/search" method="GET" class="search-form">
+            <div class="form-group">
+                <input type="text" name="q" placeholder="Search: 'weight', 'supplement', 'goal', or any term..." 
+                       value="<%= query %>" class="search-input" autofocus>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+            <div class="search-hints" style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                <p><strong>Tips:</strong> Type "weight" for weight records, "supplement" for supplements, "goal" for goals, or search any term to search all.</p>
+            </div>
+        </form>
+
+        <% if (query && !hasResults) { %>
+        <div class="alert alert-info">
+            <p>No results found for "<%= query %>"</p>
+        </div>
+        <% } %>
+
+        <% if (query && hasResults) { %>
+        <div class="search-results">
+            <h2>Search Results for "<%= query %>"</h2>
+
+            <% if (results.supplements.length > 0) { %>
+            <div class="result-section">
+                <h3>Supplements (<%= results.supplements.length %>)</h3>
+                <div class="supplement-list">
+                    <% results.supplements.forEach(supplement => { %>
+                    <div class="supplement-item-card">
+                        <h4><%= supplement.supplement_name %></h4>
+                        <% if (supplement.dosage) { %>
+                        <p><strong>Dosage:</strong> <%= supplement.dosage %></p>
+                        <% } %>
+                        <% if (supplement.frequency) { %>
+                        <p><strong>Frequency:</strong> <%= supplement.frequency %></p>
+                        <% } %>
+                        <% if (supplement.notes) { %>
+                        <p><strong>Notes:</strong> <%= supplement.notes %></p>
+                        <% } %>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+            <% } %>
+
+            <% if (results.weightRecords.length > 0) { %>
+            <div class="result-section">
+                <h3>Weight Records (<%= results.weightRecords.length %>)</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Weight (kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% results.weightRecords.forEach(record => { %>
+                            <tr>
+                                <td><%= new Date(record.record_date).toLocaleDateString('en-US') %></td>
+                                <td><strong><%= record.weight %>kg</strong></td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <% } %>
+
+            <% if (results.goals && results.goals.length > 0) { %>
+            <div class="result-section">
+                <h3>Goals (<%= results.goals.length %>)</h3>
+                <div class="goal-info">
+                    <% results.goals.forEach(goal => { %>
+                    <p><strong>Target Weight:</strong> <%= goal.target_weight %>kg</p>
+                    <% if (goal.target_date) { %>
+                    <p><strong>Target Date:</strong> <%= new Date(goal.target_date).toLocaleDateString('en-US') %></p>
+                    <% } %>
+                    <% }); %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+

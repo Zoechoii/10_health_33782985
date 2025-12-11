@@ -1,0 +1,9 @@
+home=https://www.doc.gold.ac.uk/usr/426/
+about=https://www.doc.gold.ac.uk/usr/426/about
+register=https://www.doc.gold.ac.uk/usr/426/register
+login=https://www.doc.gold.ac.uk/usr/426/login
+dashboard=https://www.doc.gold.ac.uk/usr/426/dashboard
+weight=https://www.doc.gold.ac.uk/usr/426/weight
+search=https://www.doc.gold.ac.uk/usr/426/search
+nutrition=https://www.doc.gold.ac.uk/usr/426/nutrition
+

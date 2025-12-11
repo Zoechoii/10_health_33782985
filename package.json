@@ -1,0 +1,30 @@
+{
+  "name": "yaktime-healthcare",
+  "version": "1.0.0",
+  "description": "Healthcare app - Supplement management and weight tracking",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "healthcare",
+    "supplement",
+    "weight-tracking"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.22.1",
+    "express-session": "^1.17.3",
+    "mysql2": "^3.6.5",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

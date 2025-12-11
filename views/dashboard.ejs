@@ -1,0 +1,76 @@
+<%- include('partials/header', { title: 'Dashboard - YakTime', username: username }) %>
+
+<div class="dashboard-container">
+    <h1>Dashboard</h1>
+    
+    <div class="dashboard-grid">
+        <!-- Weight Chart -->
+        <div class="dashboard-card">
+            <h2>Recent Weight Changes</h2>
+            <% if (weightRecords && weightRecords.length > 0) { %>
+            <div class="weight-chart">
+                <% weightRecords.forEach((record, index) => { %>
+                <div class="weight-item">
+                    <span class="weight-date"><%= new Date(record.record_date).toLocaleDateString('en-US') %></span>
+                    <span class="weight-value"><%= record.weight %>kg</span>
+                </div>
+                <% }); %>
+            </div>
+            <% } else { %>
+            <p class="empty-state">No weight records. <a href="/weight">Record your weight</a></p>
+            <% } %>
+        </div>
+        
+        <!-- Goal -->
+        <div class="dashboard-card">
+            <h2>Goals</h2>
+            <% if (goal) { %>
+            <div class="goal-info">
+                <p><strong>Target Weight:</strong> <%= goal.target_weight %>kg</p>
+                <% if (goal.target_date) { %>
+                <p><strong>Target Date:</strong> <%= new Date(goal.target_date).toLocaleDateString('en-US') %></p>
+                <% } %>
+            </div>
+            <% } else { %>
+            <p class="empty-state">No goal set. <a href="/weight">Set a goal</a></p>
+            <% } %>
+        </div>
+        
+        <!-- Supplements -->
+        <div class="dashboard-card full-width">
+            <h2>Supplement List</h2>
+            <% if (supplements && supplements.length > 0) { %>
+            <div class="supplement-list">
+                <% supplements.forEach(supplement => { %>
+                <div class="supplement-item">
+                    <div class="supplement-header">
+                        <h3><%= supplement.supplement_name %></h3>
+                    </div>
+                    <div class="supplement-details">
+                        <% if (supplement.dosage) { %>
+                        <p><strong>Dosage:</strong> <%= supplement.dosage %></p>
+                        <% } %>
+                        <% if (supplement.frequency) { %>
+                        <p><strong>Frequency:</strong> <%= supplement.frequency %></p>
+                        <% } %>
+                        <% if (supplement.notes) { %>
+                        <p><strong>Notes:</strong> <%= supplement.notes %></p>
+                        <% } %>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+            <% } else { %>
+            <p class="empty-state">No supplements registered. <a href="/supplements">Add a supplement</a></p>
+            <% } %>
+        </div>
+    </div>
+    
+    <div class="quick-actions">
+        <a href="/weight" class="btn btn-primary">Record Weight</a>
+        <a href="/supplements" class="btn btn-primary">Add Supplement</a>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+

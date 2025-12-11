@@ -1,0 +1,281 @@
+<%- include('partials/header', { title: 'Nutrition Check - YakTime', username: username }) %>
+
+<div class="page-container">
+    <h1>Food Nutrition Check</h1>
+    <p class="subtitle">Search for foods and check their nutritional information using USDA FoodData Central</p>
+    
+    <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    
+    <% if (typeof success !== 'undefined' && success === 'saved') { %>
+    <div class="alert alert-success">Food saved to favorites!</div>
+    <% } %>
+    
+    <!-- Search -->
+    <div class="content-card">
+        <h2>Search Foods</h2>
+        <form action="/nutrition" method="GET" class="form">
+            <div class="form-group">
+                <label for="q">Food Name</label>
+                <input type="text" id="q" name="q" value="<%= query || '' %>" 
+                       placeholder="e.g., apple, chicken breast, salmon" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+    
+    <!-- Results -->
+    <% if (searchResults && searchResults.length > 0) { %>
+    <div class="content-card full-width">
+        <h2>Search Results</h2>
+        <div class="food-list">
+            <% searchResults.forEach(food => { %>
+            <div class="food-item-card">
+                <h3><%= food.description %></h3>
+                <% if (food.brandOwner) { %>
+                <p class="brand"><strong>Brand:</strong> <%= food.brandOwner %></p>
+                <% } %>
+                <button type="button" class="btn btn-secondary btn-sm view-details-btn" 
+                        data-fdc-id="<%= food.fdcId %>">View Details</button>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+    <% } %>
+    
+    <!-- Details -->
+    <div id="nutrition-details" class="content-card full-width" style="<%= foodDetails && nutritionInfo ? '' : 'display: none;' %>">
+        <h2>Nutrition Information</h2>
+        <div id="loading-message" style="display: none; text-align: center; padding: 20px;">
+            <p>Loading nutrition information...</p>
+        </div>
+        <div class="food-details" id="food-details-content" style="<%= foodDetails && nutritionInfo ? '' : 'display: none;' %>">
+            <h3 id="food-name"><%= foodDetails && nutritionInfo ? nutritionInfo.description : '' %></h3>
+            <p id="food-brand" style="<%= foodDetails && nutritionInfo && nutritionInfo.brandOwner ? '' : 'display: none;' %>">
+                <strong>Brand:</strong> <span id="brand-text"><%= foodDetails && nutritionInfo && nutritionInfo.brandOwner ? nutritionInfo.brandOwner : '' %></span>
+            </p>
+            <p id="food-ingredients" style="<%= foodDetails && nutritionInfo && nutritionInfo.ingredients ? '' : 'display: none;' %>">
+                <strong>Ingredients:</strong> <span id="ingredients-text"><%= foodDetails && nutritionInfo && nutritionInfo.ingredients ? nutritionInfo.ingredients : '' %></span>
+            </p>
+            
+            <!-- Nutrients -->
+            <div class="nutrition-table" id="nutrition-table-container" style="<%= foodDetails && commonNutrients ? '' : 'display: none;' %>">
+                <h4>Key Nutrients (per 100g)</h4>
+                <table id="nutrition-table">
+                    <thead>
+                        <tr>
+                            <th>Nutrient</th>
+                            <th>Amount</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="nutrition-tbody">
+                        <% if (foodDetails && commonNutrients) { %>
+                        <% if (commonNutrients.calories) { %>
+                        <tr>
+                            <td>Calories</td>
+                            <td><%= commonNutrients.calories.amount.toFixed(1) %></td>
+                            <td><%= commonNutrients.calories.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.protein) { %>
+                        <tr>
+                            <td>Protein</td>
+                            <td><%= commonNutrients.protein.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.protein.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.carbohydrates) { %>
+                        <tr>
+                            <td>Carbohydrates</td>
+                            <td><%= commonNutrients.carbohydrates.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.carbohydrates.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.fat) { %>
+                        <tr>
+                            <td>Total Fat</td>
+                            <td><%= commonNutrients.fat.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.fat.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.fiber) { %>
+                        <tr>
+                            <td>Dietary Fiber</td>
+                            <td><%= commonNutrients.fiber.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.fiber.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.sugar) { %>
+                        <tr>
+                            <td>Sugar</td>
+                            <td><%= commonNutrients.sugar.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.sugar.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.sodium) { %>
+                        <tr>
+                            <td>Sodium</td>
+                            <td><%= commonNutrients.sodium.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.sodium.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.calcium) { %>
+                        <tr>
+                            <td>Calcium</td>
+                            <td><%= commonNutrients.calcium.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.calcium.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.iron) { %>
+                        <tr>
+                            <td>Iron</td>
+                            <td><%= commonNutrients.iron.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.iron.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% if (commonNutrients.vitaminC) { %>
+                        <tr>
+                            <td>Vitamin C</td>
+                            <td><%= commonNutrients.vitaminC.amount.toFixed(2) %></td>
+                            <td><%= commonNutrients.vitaminC.unit %></td>
+                        </tr>
+                        <% } %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Save -->
+            <form id="save-form" action="/nutrition/save" method="POST" style="margin-top: 20px;">
+                <input type="hidden" name="fdcId" id="save-fdcId" value="<%= foodDetails ? foodDetails.fdcId : '' %>">
+                <input type="hidden" name="foodName" id="save-foodName" value="<%= foodDetails && nutritionInfo ? nutritionInfo.description : '' %>">
+                <input type="hidden" name="query" value="<%= query %>">
+                <input type="hidden" name="nutritionData" id="save-nutritionData" value='<%= foodDetails && commonNutrients ? JSON.stringify(commonNutrients) : '' %>'>
+                <button type="submit" class="btn btn-primary">Save to Favorites</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Favorites -->
+    <div class="content-card">
+        <a href="/nutrition/favorites" class="btn btn-secondary">View Saved Foods</a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+    const nutritionDetails = document.getElementById('nutrition-details');
+    const foodDetailsContent = document.getElementById('food-details-content');
+    const loadingMessage = document.getElementById('loading-message');
+    const nutritionTbody = document.getElementById('nutrition-tbody');
+    
+    viewDetailsButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const fdcId = this.getAttribute('data-fdc-id');
+            
+            // Show loading
+            nutritionDetails.style.display = 'block';
+            if (loadingMessage) loadingMessage.style.display = 'block';
+            if (foodDetailsContent) foodDetailsContent.style.display = 'none';
+            
+            try {
+                const response = await fetch(`/nutrition/api/details/${fdcId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update food name
+                    const foodNameEl = document.getElementById('food-name');
+                    if (foodNameEl) foodNameEl.textContent = data.foodDetails.description;
+                    
+                    // Update brand
+                    const brandEl = document.getElementById('food-brand');
+                    const brandText = document.getElementById('brand-text');
+                    if (brandEl && brandText) {
+                        if (data.foodDetails.brandOwner) {
+                            brandText.textContent = data.foodDetails.brandOwner;
+                            brandEl.style.display = 'block';
+                        } else {
+                            brandEl.style.display = 'none';
+                        }
+                    }
+                    
+                    // Update ingredients
+                    const ingredientsEl = document.getElementById('food-ingredients');
+                    const ingredientsText = document.getElementById('ingredients-text');
+                    if (ingredientsEl && ingredientsText) {
+                        if (data.foodDetails.ingredients) {
+                            ingredientsText.textContent = data.foodDetails.ingredients;
+                            ingredientsEl.style.display = 'block';
+                        } else {
+                            ingredientsEl.style.display = 'none';
+                        }
+                    }
+                    
+                    // Update nutrition table
+                    const nutritionTableContainer = document.getElementById('nutrition-table-container');
+                    if (nutritionTbody && nutritionTableContainer) {
+                        nutritionTbody.innerHTML = '';
+                        const nutrients = data.commonNutrients;
+                        
+                        const nutrientRows = [
+                            { key: 'calories', label: 'Calories', decimals: 1 },
+                            { key: 'protein', label: 'Protein', decimals: 2 },
+                            { key: 'carbohydrates', label: 'Carbohydrates', decimals: 2 },
+                            { key: 'fat', label: 'Total Fat', decimals: 2 },
+                            { key: 'fiber', label: 'Dietary Fiber', decimals: 2 },
+                            { key: 'sugar', label: 'Sugar', decimals: 2 },
+                            { key: 'sodium', label: 'Sodium', decimals: 2 },
+                            { key: 'calcium', label: 'Calcium', decimals: 2 },
+                            { key: 'iron', label: 'Iron', decimals: 2 },
+                            { key: 'vitaminC', label: 'Vitamin C', decimals: 2 }
+                        ];
+                        
+                        nutrientRows.forEach(nutrient => {
+                            if (nutrients[nutrient.key]) {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${nutrient.label}</td>
+                                    <td>${nutrients[nutrient.key].amount.toFixed(nutrient.decimals)}</td>
+                                    <td>${nutrients[nutrient.key].unit}</td>
+                                `;
+                                nutritionTbody.appendChild(row);
+                            }
+                        });
+                        
+                        nutritionTableContainer.style.display = 'block';
+                    }
+                    
+                    // Update save form
+                    const saveFdcId = document.getElementById('save-fdcId');
+                    const saveFoodName = document.getElementById('save-foodName');
+                    const saveNutritionData = document.getElementById('save-nutritionData');
+                    
+                    if (saveFdcId) saveFdcId.value = data.foodDetails.fdcId;
+                    if (saveFoodName) saveFoodName.value = data.foodDetails.description;
+                    if (saveNutritionData) saveNutritionData.value = JSON.stringify(data.commonNutrients);
+                    
+                    // Hide loading, show content
+                    if (loadingMessage) loadingMessage.style.display = 'none';
+                    if (foodDetailsContent) foodDetailsContent.style.display = 'block';
+                    
+                    // Scroll to details
+                    nutritionDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    alert('Failed to load nutrition information. Please try again.');
+                    nutritionDetails.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error fetching food details:', error);
+                alert('An error occurred while loading nutrition information.');
+                nutritionDetails.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+
+<%- include('partials/footer') %>
+

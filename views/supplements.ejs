@@ -1,0 +1,113 @@
+<%- include('partials/header', { title: 'Supplements Management - YakTime', username: username }) %>
+
+<div class="page-container">
+    <h1>Supplements Management</h1>
+    
+    <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success">
+        <% if (success === 'added') { %>Supplement added.<% } %>
+        <% if (success === 'updated') { %>Supplement updated.<% } %>
+        <% if (success === 'deleted') { %>Supplement deleted.<% } %>
+    </div>
+    <% } %>
+    
+    <!-- Add -->
+    <div class="content-card">
+        <h2>Add Supplement</h2>
+        <form action="/supplements/add" method="POST" class="form">
+            <div class="form-group">
+                <label for="supplement_name">Supplement Name *</label>
+                <input type="text" id="supplement_name" name="supplement_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="dosage">Dosage (e.g., 500mg, 1 tablet)</label>
+                <input type="text" id="dosage" name="dosage">
+            </div>
+            
+            <div class="form-group">
+                <label for="frequency">Frequency (e.g., Once daily, After breakfast)</label>
+                <input type="text" id="frequency" name="frequency">
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+    
+    <!-- List -->
+    <div class="content-card full-width">
+        <h2>Supplement List</h2>
+        <% if (supplements && supplements.length > 0) { %>
+        <div class="supplement-list">
+            <% supplements.forEach(supplement => { %>
+            <div class="supplement-item-card">
+                <div class="supplement-header">
+                    <h3><%= supplement.supplement_name %></h3>
+                    <form action="/supplements/delete/<%= supplement.id %>" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" 
+                                onclick="return confirm('Are you sure you want to delete?')">Delete</button>
+                    </form>
+                </div>
+                
+                <div class="supplement-details">
+                    <% if (supplement.dosage) { %>
+                    <p><strong>Dosage:</strong> <%= supplement.dosage %></p>
+                    <% } %>
+                    <% if (supplement.frequency) { %>
+                    <p><strong>Frequency:</strong> <%= supplement.frequency %></p>
+                    <% } %>
+                    <% if (supplement.notes) { %>
+                    <p><strong>Notes:</strong> <%= supplement.notes %></p>
+                    <% } %>
+                </div>
+                
+                <!-- Edit -->
+                <details class="supplement-edit">
+                    <summary>Edit</summary>
+                    <form action="/supplements/update/<%= supplement.id %>" method="POST" class="form">
+                        <div class="form-group">
+                            <label for="supplement_name_<%= supplement.id %>">Supplement Name *</label>
+                            <input type="text" id="supplement_name_<%= supplement.id %>" name="supplement_name" 
+                                   value="<%= supplement.supplement_name %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dosage_<%= supplement.id %>">Dosage</label>
+                            <input type="text" id="dosage_<%= supplement.id %>" name="dosage" 
+                                   value="<%= supplement.dosage || '' %>">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="frequency_<%= supplement.id %>">Frequency</label>
+                            <input type="text" id="frequency_<%= supplement.id %>" name="frequency" 
+                                   value="<%= supplement.frequency || '' %>">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes_<%= supplement.id %>">Notes</label>
+                            <textarea id="notes_<%= supplement.id %>" name="notes" rows="3"><%= supplement.notes || '' %></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </details>
+            </div>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <p class="empty-state">No supplements registered.</p>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+

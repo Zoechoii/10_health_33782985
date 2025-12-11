@@ -1,0 +1,56 @@
+<%- include('partials/header', { title: 'Home - YakTime', username: username }) %>
+
+<div class="page-container">
+    <div class="home-hero">
+        <h1>Welcome to YakTime</h1>
+        <p class="subtitle">Your personal healthcare companion for managing supplements and tracking weight</p>
+    </div>
+
+    <div class="home-links">
+        <div class="link-card">
+            <h2><a href="/about">About</a></h2>
+            <p>Learn more about YakTime and its features</p>
+        </div>
+
+        <% if (loggedIn) { %>
+        <div class="link-card">
+            <h2><a href="/dashboard">Dashboard</a></h2>
+            <p>View your health overview and recent activities</p>
+        </div>
+
+        <div class="link-card">
+            <h2><a href="/weight">Weight Management</a></h2>
+            <p>Record and track your weight progress</p>
+        </div>
+
+        <div class="link-card">
+            <h2><a href="/supplements">Supplements</a></h2>
+            <p>Manage your supplement list and schedule</p>
+        </div>
+
+        <div class="link-card">
+            <h2><a href="/search">Search</a></h2>
+            <p>Search through your health records</p>
+        </div>
+
+        <div class="link-card">
+            <h2><a href="/nutrition">Nutrition Check</a></h2>
+            <p>Search foods and check nutritional information</p>
+        </div>
+        <% } else { %>
+        <div class="link-card">
+            <h2><a href="/login">Login</a></h2>
+            <p>Sign in to access your health data</p>
+        </div>
+
+        <div class="link-card">
+            <h2><a href="/register">Register</a></h2>
+            <p>Create a new account to get started</p>
+        </div>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+

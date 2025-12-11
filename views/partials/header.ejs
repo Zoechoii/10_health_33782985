@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'YakTime - Healthcare App' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <% if (typeof username !== 'undefined' && username) { %>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">YakTime</h1>
+            <div class="nav-menu">
+                <a href="/home" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/weight" class="nav-link">Weight Management</a>
+                <a href="/supplements" class="nav-link">Supplements</a>
+                <a href="/nutrition" class="nav-link">Nutrition</a>
+                <a href="/search" class="nav-link">Search</a>
+                <span class="nav-user">Hello, <%= username %></span>
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn-logout">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <% } %>
+
