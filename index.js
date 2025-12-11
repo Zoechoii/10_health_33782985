@@ -31,9 +31,9 @@ async function initializeDatabaseFromSQL() {
         await connection.query(sqlContent);
         await connection.end();
 
-        console.log('✅ Database initialized from create_db.sql');
+        console.log('Database initialized from create_db.sql');
     } catch (error) {
-        console.error('❌ Database initialization error:', error.message);
+        console.error('Database initialization error:', error.message);
         if (error.code === 'ER_ACCESS_DENIED_ERROR') {
             console.error('Access denied. Please check your MySQL username and password in .env file');
         } else if (error.code === 'ECONNREFUSED') {

@@ -41,7 +41,7 @@ async function checkDatabase() {
         );
         
         if (databases.length === 0) {
-            console.warn(`⚠️  Database '${dbName}' not found. Please run: mysql -u ${process.env.HEALTH_USER || 'health_app'} -p < database/create_db.sql`);
+            console.warn(`Database '${dbName}' not found. Please run: mysql -u ${process.env.HEALTH_USER || 'health_app'} -p < database/create_db.sql`);
         }
         
         connection.release();
