@@ -53,8 +53,6 @@ HEALTH_USER=health_app
 HEALTH_PASSWORD=qwertyuiop
 HEALTH_DATABASE=health
 
-SESSION_SECRET=your_secret_key_here_change_in_production
-PORT=8000
 ```
 
 **Note:** The database user `health_app` with password `qwertyuiop` should be created before running the application. The database `health` will be created automatically if it doesn't exist.
