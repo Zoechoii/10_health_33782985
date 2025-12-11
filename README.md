@@ -37,11 +37,6 @@ FLUSH PRIVILEGES;
 
 The database and tables will be automatically created when you start the server.
 
-To insert test data (including default login: gold/smiths):
-
-```bash
-mysql -u health_app -p < database/insert_test_data.sql
-```
 
 ### 3. Environment Variables
 
