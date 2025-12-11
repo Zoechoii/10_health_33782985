@@ -25,13 +25,19 @@ async function initializeDatabaseFromSQL() {
             multipleStatements: true
         });
 
-        const sqlFilePath = path.join(__dirname, 'database', 'create_db.sql');
-        const sqlContent = fs.readFileSync(sqlFilePath, 'utf8');
-
-        await connection.query(sqlContent);
-        await connection.end();
-
+        // create database and tables
+        const createDbPath = path.join(__dirname, 'database', 'create_db.sql');
+        const createDbContent = fs.readFileSync(createDbPath, 'utf8');
+        await connection.query(createDbContent);
         console.log('Database initialized from create_db.sql');
+
+        // insert test data
+        const testDataPath = path.join(__dirname, 'database', 'insert_test_data.sql');
+        const testDataContent = fs.readFileSync(testDataPath, 'utf8');
+        await connection.query(testDataContent);
+        console.log('Test data inserted from insert_test_data.sql');
+
+        await connection.end();
     } catch (error) {
         console.error('Database initialization error:', error.message);
         if (error.code === 'ER_ACCESS_DENIED_ERROR') {
