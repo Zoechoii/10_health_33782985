@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 
-// Supplements management page
+// supplements management page
 router.get('/supplements', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -32,7 +32,7 @@ router.get('/supplements', requireAuth, async (req, res) => {
     }
 });
 
-// Add supplement
+// add supplement
 router.post('/supplements/add', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -65,7 +65,7 @@ router.post('/supplements/add', requireAuth, async (req, res) => {
     }
 });
 
-// Update supplement
+// update supplement
 router.post('/supplements/update/:id', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -90,7 +90,7 @@ router.post('/supplements/update/:id', requireAuth, async (req, res) => {
     }
 });
 
-// Delete supplement
+// delete supplement
 router.post('/supplements/delete/:id', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;

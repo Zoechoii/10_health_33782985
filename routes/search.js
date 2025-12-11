@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 
-// Search page
+// search page
 router.get('/search', requireAuth, async (req, res) => {
     const query = req.query.q || '';
     let results = {
@@ -18,7 +18,7 @@ router.get('/search', requireAuth, async (req, res) => {
             const userId = req.session.userId;
             const queryLower = query.toLowerCase().trim();
             
-            // Determine search category
+            // determine search category
             let searchCategory = 'all';
             let actualSearchTerm = query;
             

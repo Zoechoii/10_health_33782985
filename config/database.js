@@ -1,12 +1,12 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// Handle empty password
+// handle empty password
 const password = process.env.HEALTH_PASSWORD && process.env.HEALTH_PASSWORD.trim() !== '' 
     ? process.env.HEALTH_PASSWORD 
     : undefined;
 
-// Create pool without database to allow database creation
+// create pool without database to allow database creation
 const poolConfig = {
     host: process.env.HEALTH_HOST || 'localhost',
     user: process.env.HEALTH_USER || 'health_app',
@@ -18,10 +18,10 @@ const poolConfig = {
     multipleStatements: true
 };
 
-// Pool for general connections
+// pool for general connections
 const adminPool = mysql.createPool(poolConfig);
 
-// Pool for database connections
+// pool for database connections
 const poolConfigWithDb = {
     ...poolConfig,
     database: process.env.HEALTH_DATABASE || 'health'
@@ -29,7 +29,7 @@ const poolConfigWithDb = {
 
 const pool = mysql.createPool(poolConfigWithDb);
 
-// Initialize database and create tables if needed
+// initialize database and create tables if needed
 async function initializeDatabase() {
     try {
         const connection = await adminPool.getConnection();
@@ -121,7 +121,7 @@ async function initializeDatabase() {
                 )
             `);
         } else {
-            // Create favorite_foods table if missing
+            // create favorite_foods table if missing
             if (favoriteFoodsTable.length === 0) {
                 await dbConnection.execute(`
                     CREATE TABLE IF NOT EXISTS favorite_foods (
@@ -152,7 +152,7 @@ async function initializeDatabase() {
     }
 }
 
-// Initialize on load
+// initialize on load
 initializeDatabase();
 
 module.exports = pool;

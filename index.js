@@ -10,35 +10,35 @@ const HOST = process.env.HOST || '0.0.0.0';
 
 
 
-// Middleware
+// middleware setup
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Trust proxy for correct protocol/host detection (for reverse proxies)
+// trust proxy for reverse proxy
 app.set('trust proxy', true);
 
-// Session (must be before baseUrl middleware to access req.session)
+// session setup (must be before baseUrl middleware)
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: 'auto', // Auto-detect secure based on protocol (works with reverse proxies)
+        secure: 'auto', // auto-detect based on protocol
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: 'lax', // Works with reverse proxies
+        sameSite: 'lax', // works with reverse proxy
         httpOnly: true
     },
-    name: 'sessionId' // Explicit session name
+    name: 'sessionId' // session cookie name
 }));
 
-// Helper function to get base path from request
+// get base path from request
 function getBasePath(req) {
-    // First, check if base path is already stored in session
+    // use stored base path from session if available
     if (req.session && req.session.basePath) {
         return req.session.basePath;
     }
     
-    // Check multiple sources for base path
+    // check multiple sources for base path
     const sources = [
         req.originalUrl,
         req.url,
@@ -49,14 +49,14 @@ function getBasePath(req) {
     
     for (const source of sources) {
         if (source && typeof source === 'string') {
-            // Extract path from full URL if it's a referer header
+            // extract path from full URL if it's a referer header
             let pathToCheck = source;
             if (source.startsWith('http://') || source.startsWith('https://')) {
                 try {
                     const url = new URL(source);
                     pathToCheck = url.pathname;
                 } catch (e) {
-                    // If URL parsing fails, try to extract path manually
+                    // if URL parsing fails, extract path manually
                     const match = source.match(/https?:\/\/[^\/]+(\/usr\/426[^\s?]*)/);
                     if (match) {
                         pathToCheck = match[1].split('?')[0].split('#')[0];
@@ -66,7 +66,7 @@ function getBasePath(req) {
             
             if (pathToCheck.startsWith('/usr/426')) {
                 const basePath = '/usr/426';
-                // Store in session for future requests
+                // store in session for future requests
                 if (req.session) {
                     req.session.basePath = basePath;
                 }
@@ -78,20 +78,20 @@ function getBasePath(req) {
     return '';
 }
 
-// Middleware to set baseUrl on request object for all requests
+// middleware to set baseUrl on all requests
 app.use((req, res, next) => {
     req.baseUrl = getBasePath(req);
     next();
 });
 
-// View engine
+// view engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Static files
+// static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Root route - render home page directly (before other routes to avoid conflicts)
+// root route - render home page (before other routes to avoid conflicts)
 app.get('/', (req, res) => {
     res.render('home', { 
         username: req.session?.username || null,
@@ -99,7 +99,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// Routes - load first
+// load routes
 try {
     const homeRoutes = require('./routes/home');
     const aboutRoutes = require('./routes/about');
@@ -114,7 +114,7 @@ try {
         console.error('Error: One or more route modules failed to load');
     }
 
-    // Register all routes first
+    // register all routes
     app.use('/', authRoutes);
     app.use('/', homeRoutes);
     app.use('/', aboutRoutes);
@@ -130,7 +130,7 @@ try {
 
 // 404 handler
 app.use((req, res) => {
-    // Ignore common browser auto-requests (favicon, common CSS names, etc.)
+    // ignore common browser auto-requests (favicon, CSS, etc.)
     const ignoredPaths = ['/favicon.ico', '/main.css', '/style.css', '/app.css', '/common.css'];
     if (ignoredPaths.includes(req.url)) {
         return res.status(404).end();
@@ -139,7 +139,7 @@ app.use((req, res) => {
     res.status(404).send(`404 - Page not found: ${req.url}`);
 });
 
-// Start server
+// start server
 app.listen(PORT, HOST, () => {
     console.log(`Server is running at http://${HOST}:${PORT}`);
 });

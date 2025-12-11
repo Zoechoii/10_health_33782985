@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// About page
+// about page
 router.get('/about', (req, res) => {
     res.render('about', { 
         username: req.session?.username || null,

@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 
-// Dashboard
+// dashboard
 router.get('/dashboard', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;

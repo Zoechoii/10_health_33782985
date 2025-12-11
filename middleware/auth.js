@@ -1,4 +1,4 @@
-// Check login status
+// check login status
 function requireAuth(req, res, next) {
     if (req.session && req.session.userId) {
         return next();
@@ -8,7 +8,7 @@ function requireAuth(req, res, next) {
     }
 }
 
-// Prevent already logged-in users from accessing login/register pages
+// redirect if already logged in (prevent access to login/register pages)
 function redirectIfAuthenticated(req, res, next) {
     if (req.session && req.session.userId) {
         const baseUrl = req.baseUrl || '';

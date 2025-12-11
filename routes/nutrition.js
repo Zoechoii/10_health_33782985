@@ -4,7 +4,7 @@ const pool = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 const { searchFoods, getFoodDetails, formatNutritionInfo, getCommonNutrients } = require('../utils/usda');
 
-// Nutrition search page
+// nutrition search page
 router.get('/nutrition', requireAuth, async (req, res) => {
     try {
         const query = req.query.q || '';
@@ -50,7 +50,7 @@ router.get('/nutrition', requireAuth, async (req, res) => {
     }
 });
 
-// Save favorite food to database
+// save favorite food
 router.post('/nutrition/save', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -83,7 +83,7 @@ router.post('/nutrition/save', requireAuth, async (req, res) => {
     }
 });
 
-// Get saved favorite foods
+// get saved favorite foods
 router.get('/nutrition/favorites', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -108,7 +108,7 @@ router.get('/nutrition/favorites', requireAuth, async (req, res) => {
     }
 });
 
-// Delete favorite food
+// delete favorite food
 router.post('/nutrition/favorites/delete/:id', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -128,7 +128,7 @@ router.post('/nutrition/favorites/delete/:id', requireAuth, async (req, res) => 
     }
 });
 
-// Get food details API (JSON)
+// get food details API (JSON)
 router.get('/nutrition/api/details/:fdcId', requireAuth, async (req, res) => {
     try {
         const fdcId = parseInt(req.params.fdcId);

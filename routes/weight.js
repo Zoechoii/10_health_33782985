@@ -3,18 +3,18 @@ const router = express.Router();
 const pool = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 
-// Weight management page
+// weight management page
 router.get('/weight', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
 
-        // Get all weight records
+        // get all weight records
         const [weightRecords] = await pool.execute(
             'SELECT * FROM weight_records WHERE user_id = ? ORDER BY record_date DESC',
             [userId]
         );
 
-        // Get goals
+        // get goals
         const [goals] = await pool.execute(
             'SELECT * FROM goals WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1',
             [userId]
@@ -40,7 +40,7 @@ router.get('/weight', requireAuth, async (req, res) => {
     }
 });
 
-// Add weight record
+// add weight record
 router.post('/weight/add', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -78,7 +78,7 @@ router.post('/weight/add', requireAuth, async (req, res) => {
     }
 });
 
-// Delete weight record
+// delete weight record
 router.post('/weight/delete/:id', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -98,7 +98,7 @@ router.post('/weight/delete/:id', requireAuth, async (req, res) => {
     }
 });
 
-// Set goal
+// set goal
 router.post('/weight/goal', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;

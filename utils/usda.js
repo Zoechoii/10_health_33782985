@@ -1,7 +1,7 @@
 const USDA_API_KEY = 'ySZ7E7EEPDvKGBnWPudYRnTAxlfBEclUL1pwiTE9';
 const USDA_BASE_URL = 'https://api.nal.usda.gov/fdc/v1';
 
-// Search for foods
+// search for foods
 async function searchFoods(query, pageSize = 10) {
     try {
         const url = `${USDA_BASE_URL}/foods/search?api_key=${USDA_API_KEY}&query=${encodeURIComponent(query)}&pageSize=${pageSize}`;
@@ -19,7 +19,7 @@ async function searchFoods(query, pageSize = 10) {
     }
 }
 
-// Get food details by FDC ID
+// get food details by FDC ID
 async function getFoodDetails(fdcId) {
     try {
         const url = `${USDA_BASE_URL}/food/${fdcId}?api_key=${USDA_API_KEY}`;
@@ -37,7 +37,7 @@ async function getFoodDetails(fdcId) {
     }
 }
 
-// Format nutrition information
+// format nutrition information
 function formatNutritionInfo(foodData) {
     const nutrition = {
         description: foodData.description || 'N/A',
@@ -46,7 +46,7 @@ function formatNutritionInfo(foodData) {
         nutrients: {}
     };
 
-    // Extract nutrients
+    // extract nutrients
     if (foodData.foodNutrients && Array.isArray(foodData.foodNutrients)) {
         foodData.foodNutrients.forEach(nutrient => {
             if (nutrient.nutrient && nutrient.amount !== null && nutrient.amount !== undefined) {
@@ -63,7 +63,7 @@ function formatNutritionInfo(foodData) {
     return nutrition;
 }
 
-// Get common nutrients summary
+// get common nutrients summary
 function getCommonNutrients(nutrition) {
     const commonNutrients = {
         calories: null,
@@ -78,7 +78,7 @@ function getCommonNutrients(nutrition) {
         vitaminC: null
     };
 
-    // Map nutrients
+    // map nutrients
     const nutrientMap = {
         'Energy': 'calories',
         'Protein': 'protein',

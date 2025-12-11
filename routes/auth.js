@@ -4,12 +4,12 @@ const pool = require('../config/database');
 const { generateSalt, hashPassword, verifyPassword } = require('../utils/password');
 const { redirectIfAuthenticated } = require('../middleware/auth');
 
-// Register page
+// register page
 router.get('/register', redirectIfAuthenticated, (req, res) => {
     res.render('register', { error: null });
 });
 
-// Register handler
+// register handler
 router.post('/register', redirectIfAuthenticated, async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
 
@@ -21,7 +21,7 @@ router.post('/register', redirectIfAuthenticated, async (req, res) => {
         return res.render('register', { error: 'Passwords do not match.' });
     }
 
-    // Password validation: at least 8 characters, one lowercase, one uppercase, one number, one special character
+    // password validation: min 8 chars, at least one lowercase, uppercase, number, special char
     if (password.length < 8) {
         return res.render('register', { error: 'Password must be at least 8 characters long.' });
     }
@@ -38,7 +38,7 @@ router.post('/register', redirectIfAuthenticated, async (req, res) => {
     }
 
     try {
-        // Check for duplicates
+        // check for duplicates
         const [existingUsers] = await pool.execute(
             'SELECT * FROM users WHERE username = ? OR email = ?',
             [username, email]
@@ -64,7 +64,7 @@ router.post('/register', redirectIfAuthenticated, async (req, res) => {
     }
 });
 
-// Login page
+// login page
 router.get('/login', redirectIfAuthenticated, (req, res) => {
     const registered = req.query.registered === 'true';
     res.render('login', { 
@@ -74,7 +74,7 @@ router.get('/login', redirectIfAuthenticated, (req, res) => {
     });
 });
 
-// Login handler
+// login handler
 router.post('/login', redirectIfAuthenticated, async (req, res) => {
     const { username, password } = req.body;
 
@@ -109,7 +109,7 @@ router.post('/login', redirectIfAuthenticated, async (req, res) => {
     }
 });
 
-// Logout
+// logout
 router.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
